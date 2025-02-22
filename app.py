@@ -15,6 +15,7 @@ from io import BytesIO
 import base64
 import datetime
 import json
+import os
 
 # Importa le classi dai moduli (assicurati che i file siano nella stessa cartella o correttamente importabili)
 from msci_weight import MSCIWeightsExtractor, normalize_to_100, read_json_dictionary
