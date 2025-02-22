@@ -133,4 +133,5 @@ def handler(event, context):
 # Main: esecuzione dell'app (Vercel utilizzerà direttamente 'app')
 # ===============================================================
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000, debug=True)
+    port = int(os.environ.get("PORT", 8000))  # Prendi la porta da Railway
+    app.run(host="0.0.0.0", port=port)  # Ascolta su tutte le interfacce
