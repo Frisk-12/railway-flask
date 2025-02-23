@@ -21,17 +21,10 @@ import os
 from msci_weight import MSCIWeightsExtractor, normalize_to_100, read_json_dictionary
 from msci_price_data import MSCIIndexFetcher, index_dictionary
 from black_litterman import BlackLitterman
+from helper import fetch_index_data, fig_to_base64, get_msci_weight
 
 app = Flask(__name__)
 CORS(app)  # Abilita CORS per permettere le chiamate dal frontend Node.js
-
-# Helper: converte la figura matplotlib in una stringa base64
-def fig_to_base64():
-    buf = BytesIO()
-    plt.savefig(buf, format="png", bbox_inches="tight")
-    plt.close()
-    buf.seek(0)
-    return base64.b64encode(buf.read()).decode("utf-8")
 
 @app.route("/")
 def home():
@@ -46,18 +39,9 @@ def api_root():
 # ===============================================================
 @app.route("/api/weights/sector", methods=["GET"])
 def get_sector_weights():
-    extractor = MSCIWeightsExtractor()
-    sector_dict = extractor.get_sector_weights()
-    # Rimuove il settore "Real Estate" se presente
-    if "Real Estate" in sector_dict:
-        del sector_dict["Real Estate"]
-    else:
-        sector_dict = read_json_dictionary('sector_weights.json')
-    try:
-        normalized = normalize_to_100(sector_dict)
-        return jsonify(normalized)
-    except:
-        return sector_dict
+    weights = get_msci_weight()
+    return jesonify(weights)
+
 
 # ===============================================================
 # Endpoint per MSCI Weights - Country
@@ -74,18 +58,14 @@ def get_country_weights():
 # ===============================================================
 @app.route("/api/index/data", methods=["GET"])
 def get_index_data():
-    print("Request URL:", request.url)
-    print("Query Params:", request.args)
-    #print("Get JSON:", request.get_json())
     start_date = request.args.get("start_date")
     end_date = request.args.get("end_date")
     if not start_date or not end_date:
         return jsonify({"error": "I parametri start_date e end_date sono obbligatori"}), 400
     try:
-        fetcher = MSCIIndexFetcher(index_dict=index_dictionary, start_date=start_date, end_date=end_date)
-        res_dict = fetcher.get_data()
+        res_dict = fetch_index_data(start_date, end_date)
         return jsonify(res_dict)
-    except Exception as e:
+    except ValueError as e:
         return jsonify({"error": str(e)}), 500
 
 # ===============================================================
@@ -100,17 +80,26 @@ def compute_optimal_weights():
         if not data:
             return jsonify({"error": "Il body della richiesta è vuoto"}), 400
         
-        market_comp = data.get("market_composition")
+        market_comp = get_msci_weight()w
         risk_aversion = data.get("risk_aversion")
         max_deviation = data.get("max_deviation", 0.20)
         views = data.get("views", [])
-        price_data = get_index_data()#data.get("price_data")
 
-        # Validazione base
-        if not market_comp or risk_aversion is None or price_data is None:
-            return jsonify({"error": "Parametri mancanti: market_composition, risk_aversion o price_data"}), 400
+        start_date = data.get("start_date")
+        end_date = data.get("end_date")
+        
+        if not start_date or not end_date:
+            return jsonify({"error": "I parametri start_date e end_date sono obbligatori"}), 400
+
+        # Otteniamo i dati storici MSCI basandoci sulle date scelte dall'utente
+        price_data = fetch_index_data(start_date, end_date)  
+
+        if not price_data:
+            return jsonify({"error": "Nessun dato trovato per l'intervallo di date selezionato"}), 400
 
         price_df = pd.DataFrame(price_data)
+
+        # Creiamo il modello Black-Litterman
         bl_model = BlackLitterman(market_composition=market_comp, price_data=price_df, risk_aversion=risk_aversion)
         
         if views:
@@ -123,6 +112,7 @@ def compute_optimal_weights():
         result = {asset: weight for asset, weight in zip(bl_model.assets, optimal_weights)}
 
         return jsonify(result)
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
