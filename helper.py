@@ -1,5 +1,5 @@
 from msci_price_data import MSCIIndexFetcher, index_dictionary
-from msci_weight import MSCIWeightsExtractor, normalize_to_100
+from msci_weight import MSCIWeightsExtractor, normalize_to_100, read_json_dictionary
 
 
 def get_msci_weight():
