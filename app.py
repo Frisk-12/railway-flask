@@ -53,7 +53,6 @@ def get_sector_weights():
         del sector_dict["Real Estate"]
     else:
         sector_dict = read_json_dictionary('sector_weights.json')
-        del sector_dict["Real Estate"]
     try:
         normalized = normalize_to_100(sector_dict)
         return jsonify(normalized)
