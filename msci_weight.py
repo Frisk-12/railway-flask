@@ -23,7 +23,7 @@ class MSCIWeightsExtractor:
                 "connection": "keep-alive",
                 "cookie": ("msci-appgw-affinityCORS=58d050eff25537bf052edeafd1a28ae7; msci-appgw-affinity=58d050eff25537bf052edeafd1a28ae7; "
                            "INGRESSCOOKIE=b23f2e0325695b31ccad089c4d5eec4c|966b3c2cb4f050ee70514f516ad4417d; "
-                           "MSCIJSESSIONID=EC728712B6CE29658622BFCC1109C77B.jvmRoute-azure-liferay-2; COOKIE_SUPPORT=true; "
+                           "MSCIJSESSIONID=6E931CB0B959C2D281E4D50F81B39C32.jvmRoute-azure-liferay-2; COOKIE_SUPPORT=true; "
                            "EVICT_LIFERAY_LANGUAGE_ID=en_US; _gcl_au=1.1.391327031.1739732992; "
                            "coveo_visitorId=eb91be36-949b-41f1-93da-fe28474fa3ac; _ga=GA1.1.1170491579.1739732993; "
                            "_hjSession_517363=eyJpZCI6ImVhZjUzYWI4LTMyMzctNDJhMS04YTNhLTA3NTY0NDZlMDk0ZCIsImMiOjE3Mzk3MzI5OTI3MTMsInMiOjAsInIiOjAsInNiIjowLCJzciI6MCwic2UiOjAsImZzIjoxLCJzcCI6MH0=; "
