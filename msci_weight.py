@@ -25,7 +25,7 @@ class MSCIWeightsExtractor:
                 "Upgrade-Insecure-Requests": "1",
             }
 
-        response = requests.get(url, headers=headers, cookies=cookies)
+        response = requests.get(url, headers=headers)
         self.url = url
         self.headers = headers
         self.html_content = None
