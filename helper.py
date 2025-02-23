@@ -1,5 +1,19 @@
 from msci_price_data import MSCIIndexFetcher, index_dictionary
 
+def get_msci_weight():
+    extractor = MSCIWeightsExtractor()
+    sector_dict = extractor.get_sector_weights()
+    # Rimuove il settore "Real Estate" se presente
+    if "Real Estate" in sector_dict:
+        del sector_dict["Real Estate"]
+    else:
+        sector_dict = read_json_dictionary('sector_weights.json')
+    try:
+        normalized = normalize_to_100(sector_dict)
+        return normalized
+    except:
+        return sector_dict
+
 def fetch_index_data(start_date, end_date):
     try:
         fetcher = MSCIIndexFetcher(index_dict=index_dictionary, start_date=start_date, end_date=end_date)
