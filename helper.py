@@ -1,4 +1,6 @@
 from msci_price_data import MSCIIndexFetcher, index_dictionary
+from msci_weight import MSCIWeightsExtractor, normalize_to_100
+
 
 def get_msci_weight():
     extractor = MSCIWeightsExtractor()
