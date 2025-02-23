@@ -80,7 +80,7 @@ def compute_optimal_weights():
         if not data:
             return jsonify({"error": "Il body della richiesta è vuoto"}), 400
         
-        market_comp = get_msci_weight()w
+        market_comp = get_msci_weight()
         risk_aversion = data.get("risk_aversion")
         max_deviation = data.get("max_deviation", 0.20)
         views = data.get("views", [])
