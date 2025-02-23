@@ -39,12 +39,18 @@ class MSCIIndexFetcher:
             return {"error": f"Failed to fetch data for index {index_code}", "status_code": response.status_code}
 
     def get_data(self):
-        results = {}
+        df_list = []
+        df_dict = pd.DataFrame()
         for name, index_code in self.index_dict.items():
             data = self.fetch_data(index_code)
-            if "data" in data:
-                results[name] = data["data"]["indexes"][0]["performanceHistory"]
-        return results
+            performanceHistory = data['data']['indexes'][0]['performanceHistory']
+
+            df = pd.DataFrame(performanceHistory)
+            df = df.rename(columns={'value': name})
+            df.set_index('date', inplace=True)
+            df_dict = pd.concat([df_dict, df], axis=1)
+        return df_dict.to_dict()
+
 
 
 index_dictionary = {
