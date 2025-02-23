@@ -79,29 +79,28 @@ def compute_optimal_weights():
         data = request.get_json()
         if not data:
             return jsonify({"error": "Il body della richiesta è vuoto"}), 400
-        
+        # Estrae la composizione di mercato
         market_comp = get_msci_weight()
+        # Se market_comp contiene una chiave "sector", estrai quella
+
         risk_aversion = data.get("risk_aversion")
         max_deviation = data.get("max_deviation", 0.20)
         views = data.get("views", [])
-
         start_date = data.get("start_date")
         end_date = data.get("end_date")
-        
+
         if not start_date or not end_date:
             return jsonify({"error": "I parametri start_date e end_date sono obbligatori"}), 400
 
-        # Otteniamo i dati storici MSCI basandoci sulle date scelte dall'utente
-        price_data = fetch_index_data(start_date, end_date)  
-
+        # Ottieni i dati storici (assicurati che fetch_index_data restituisca i dati nel formato corretto)
+        price_data = fetch_index_data(start_date, end_date) 
         if not price_data:
             return jsonify({"error": "Nessun dato trovato per l'intervallo di date selezionato"}), 400
 
         price_df = pd.DataFrame(price_data)
-
-        # Creiamo il modello Black-Litterman
+        # Crea il modello Black-Litterman
         bl_model = BlackLitterman(market_composition=market_comp, price_data=price_df, risk_aversion=risk_aversion)
-        
+
         if views:
             P, Q, Omega = bl_model.add_views(views)
             mu_post = bl_model.compute_posterior_returns(P, Q, Omega)
@@ -109,13 +108,13 @@ def compute_optimal_weights():
             mu_post = bl_model.compute_equilibrium_returns()
 
         optimal_weights = bl_model.compute_optimal_weights(mu_post, max_deviation=max_deviation)
+
         result = {asset: weight for asset, weight in zip(bl_model.assets, optimal_weights)}
-
         return jsonify(result)
-
     except Exception as e:
+        
         return jsonify({"error": str(e)}), 500
-    
+
 # Vercel ha bisogno di questa riga:
 def handler(event, context):
     return app(event, context)
