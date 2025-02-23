@@ -105,7 +105,7 @@ def compute_optimal_weights():
         risk_aversion = data.get("risk_aversion")
         max_deviation = data.get("max_deviation", 0.20)
         views = data.get("views", [])
-        price_data = data.get("price_data")
+        price_data = get_index_data()#data.get("price_data")
 
         # Validazione base
         if not market_comp or risk_aversion is None or price_data is None:
