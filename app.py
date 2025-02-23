@@ -63,7 +63,7 @@ def get_sector_weights():
 # ===============================================================
 # Endpoint per MSCI Weights - Country
 # ===============================================================
-@app.route("/api/eights/country", methods=["GET"])
+@app.route("/api/weights/country", methods=["GET"])
 def get_country_weights():
     extractor = MSCIWeightsExtractor()
     country_dict = extractor.get_country_weights()
