@@ -18,7 +18,7 @@ import json
 import os
 
 # Importa le classi dai moduli (assicurati che i file siano nella stessa cartella o correttamente importabili)
-from msci_weight import MSCIWeightsExtractor, normalize_to_100, read_json_dictionary
+from msci_weight import MSCIWeightsExtractor, normalize_to_100
 from msci_price_data import MSCIIndexFetcher, index_dictionary
 from black_litterman import BlackLitterman
 from helper import fetch_index_data, fig_to_base64, get_msci_weight
