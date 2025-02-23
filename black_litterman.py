@@ -62,7 +62,8 @@ class BlackLitterman:
             - DataFrame con i rendimenti.
         """
         if method == 'log':
-            returns = np.log(self.price_data / self.price_data.shift(1))
+                returns = np.log(self.price_data / self.price_data.shift(1))
+
         elif method == 'simple':
             returns = self.price_data.pct_change()
         else:
