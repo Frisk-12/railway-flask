@@ -128,24 +128,76 @@ class BlackLitterman:
         Omega = np.array([[confidence]])
         return P, Q, Omega
 
+    def add_view(self, view: dict) -> tuple:
+        """
+        Incorpora una view definita dall'utente.
+        
+        La view può essere specificata in maniera flessibile:
+        - 'assets' può essere una lista oppure una stringa (anche con asset separati da virgola).
+        - Se 'assets' è vuoto o non viene fornito, si interpreta che non sia stata definita alcuna view,
+          e la funzione restituisce None.
+        - Gli altri parametri ('excess_return', 'confidence') hanno default espliciti.
+        
+        Ritorna:
+        - (P, Q, Omega) se la view è valida, altrimenti None.
+        """
+        if not view:
+            return None
+    
+        asset_input = view.get('assets', None)
+        if asset_input is None or asset_input == "":
+            # Nessun asset specificato: interpretiamo che non ci sia una view da applicare
+            return None
+    
+        # Se viene passata una stringa, la trasformiamo in lista
+        if isinstance(asset_input, str):
+            asset_list = [asset.strip() for asset in asset_input.split(',') if asset.strip()]
+        elif isinstance(asset_input, list):
+            asset_list = asset_input
+        else:
+            raise ValueError("Il campo 'assets' deve essere una stringa o una lista.")
+    
+        if not asset_list:
+            return None
+    
+        n_assets = len(self.assets)
+        P = np.zeros((1, n_assets))
+        indices = [i for i, asset in enumerate(self.assets) if asset in asset_list]
+        if not indices:
+            raise ValueError("Nessun asset della view corrisponde agli asset del portafoglio.")
+    
+        # Assegna 1/len(indices) agli asset selezionati per ottenere una media semplice
+        for i in indices:
+            P[0, i] = 1.0 / len(indices)
+    
+        excess_return = view.get('excess_return', 0.0)
+        if excess_return is None:
+            excess_return = 0.0
+    
+        Q = P.dot(self.pi) + excess_return
+        confidence = view.get('confidence', 0.0001)
+        Omega = np.array([[confidence]])
+        return P, Q, Omega
+    
     def add_views(self, views: list) -> tuple:
         """
         Aggrega una lista di view in matrici totali.
-
-        Parametri:
-            - views: lista di dizionari, ognuno definito come in add_view().
-
-        Ritorna:
-            - P_total: matrice (n_views x n_assets)
-            - Q_total: vettore (n_views,)
-            - Omega_total: matrice blocco-diagonale (n_views x n_views)
+        Se la lista è vuota o tutte le view risultano "vuote", restituisce (None, None, None).
         """
         P_list, Q_list, Omega_list = [], [], []
         for view in views:
-            P_i, Q_i, Omega_i = self.add_view(view)
+            result = self.add_view(view)
+            if result is None:
+                continue
+            P_i, Q_i, Omega_i = result
             P_list.append(P_i)
             Q_list.append(Q_i)
             Omega_list.append(Omega_i)
+        
+        if not P_list:
+            # Nessuna view valida è stata definita
+            return None, None, None
+    
         P_total = np.concatenate(P_list, axis=0)
         Q_total = np.concatenate(Q_list, axis=0)
         n_views = len(Omega_list)
@@ -153,20 +205,18 @@ class BlackLitterman:
         for i in range(n_views):
             Omega_total[i, i] = Omega_list[i][0, 0]
         return P_total, Q_total, Omega_total
-
+    
     def compute_posterior_returns(self, P: np.ndarray, Q: np.ndarray, Omega: np.ndarray) -> np.ndarray:
         """
         Calcola i rendimenti attesi posteriori integrando le view:
-            μ_post = π + τ Σ Pᵀ (P τ Σ Pᵀ + Ω)⁻¹ (Q − P π)
-
-        Parametri:
-            - P: matrice delle view (n_views x n_assets)
-            - Q: vettore delle view (n_views,)
-            - Omega: matrice delle incertezze (n_views x n_views)
-
-        Ritorna:
-            - μ_post: vettore dei rendimenti aggiornati (n_assets,)
+        
+        μ_post = π + τ Σ Pᵀ (P τ Σ Pᵀ + Ω)⁻¹ (Q − P π)
+        
+        Se P è None o vuota, restituisce semplicemente i rendimenti di equilibrio π.
         """
+        if P is None or P.shape[0] == 0:
+            return self.pi
+    
         middle_term = P.dot(self.tau * self.Sigma).dot(P.T) + Omega
         middle_term_inv = np.linalg.inv(middle_term)
         adjustment = self.tau * self.Sigma.dot(P.T).dot(middle_term_inv).dot(Q - P.dot(self.pi))
