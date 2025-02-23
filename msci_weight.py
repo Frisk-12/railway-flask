@@ -16,44 +16,45 @@ class MSCIWeightsExtractor:
     def __init__(self, url="https://www.msci.com/indexes/index/990100", headers=None):
         if headers is None:
             headers = {
-                "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-                "accept-encoding": "gzip, deflate, br, zstd",
-                "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
-                "cache-control": "max-age=0",
-                "connection": "keep-alive",
-                "cookie": ("msci-appgw-affinityCORS=58d050eff25537bf052edeafd1a28ae7; msci-appgw-affinity=58d050eff25537bf052edeafd1a28ae7; "
-                           "INGRESSCOOKIE=b23f2e0325695b31ccad089c4d5eec4c|966b3c2cb4f050ee70514f516ad4417d; "
-                           "MSCIJSESSIONID=6E931CB0B959C2D281E4D50F81B39C32.jvmRoute-azure-liferay-2; COOKIE_SUPPORT=true; "
-                           "EVICT_LIFERAY_LANGUAGE_ID=en_US; _gcl_au=1.1.391327031.1739732992; "
-                           "coveo_visitorId=eb91be36-949b-41f1-93da-fe28474fa3ac; _ga=GA1.1.1170491579.1739732993; "
-                           "_hjSession_517363=eyJpZCI6ImVhZjUzYWI4LTMyMzctNDJhMS04YTNhLTA3NTY0NDZlMDk0ZCIsImMiOjE3Mzk3MzI5OTI3MTMsInMiOjAsInIiOjAsInNiIjowLCJzciI6MCwic2UiOjAsImZzIjoxLCJzcCI6MH0=; "
-                           "OptanonAlertBoxClosed=2025-02-16T19:09:56.193Z; visitor_id36252=794111785; "
-                           "visitor_id36252-hash=5cea1eb14fbfa10e0bc48f8a10d5ffb5fa343ce69558c2977247d637679a9e1b089b097aff2932871eec7d9bfd50296acae82ae2; "
-                           "_hjSessionUser_517363=eyJpZCI6ImFjYWFhYTY1LWIzOTItNWU0Yi05YWNmLWRkYmE1MmIyYzhjYyIsImNyZWF0ZWQiOjE3Mzk3MzI5OTI3MTIsImV4aXN0aW5nIjp0cnVlfQ==; "
-                           "OptanonConsent=isGpcEnabled=0&datestamp=Sun+Feb+16+2025+20%3A46%3A05+GMT%2B0100+(Central+European+Standard+Time)&version=202307.1.0&browserGpcFlag=0&isIABGlobal=false&hosts=&consentId=059a6ee0-4d25-4ef0-b576-2f505dfbf346&interactionCount=1&landingPath=NotLandingPage&groups=C0001%3A1%2CC0002%3A1%2CC0003%3A1%2CC0004%3A1&geolocation=IT%3B25&AwaitingReconsent=false; "
-                           "_ga_1N2VH31REP=GS1.1.1739732992.1.1.1739735170.0.0.0; _ga_763SS1MLQ7=GS1.1.1739732992.1.1.1739735367.0.0.0"),
-                "host": "www.msci.com",
-                "if-none-match": '"118csfgtmu96vb9"',
-                "referer": "https://www.google.com/",
-                "sec-ch-ua": '"Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"',
-                "sec-ch-ua-mobile": "?0",
-                "sec-ch-ua-platform": '"macOS"',
-                "sec-fetch-dest": "document",
-                "sec-fetch-mode": "navigate",
-                "sec-fetch-site": "same-origin",
-                "sec-fetch-user": "?1",
-                "upgrade-insecure-requests": "1",
-                "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
-            }
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+            "Accept-Encoding": "gzip, deflate, br, zstd",
+            "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
+            "Connection": "keep-alive",
+            "Referer": "https://www.msci.com/",
+            "Upgrade-Insecure-Requests": "1",
+        }
+        
+        cookies = {
+            "_gcl_au": "1.1.921635372.1740135666",
+            "coveo_visitorId": "cf1fba1a-3d3a-43ae-ac2a-a94fddfa508f",
+            "_ga": "GA1.1.217966193.1740135667",
+            "msci-appgw-affinityCORS": "58d050eff25537bf052edeafd1a28ae7",
+            "msci-appgw-affinity": "58d050eff25537bf052edeafd1a28ae7",
+            "COOKIE_SUPPORT": "true",
+            "EVICT_LIFERAY_LANGUAGE_ID": "en_US",
+            "INGRESSCOOKIE": "11177794b806c7f68b50f07e714a09ee|966b3c2cb4f050ee70514f516ad4417d",
+            "OptanonAlertBoxClosed": "2025-02-21T11:01:36.950Z",
+            "_hjSessionUser_517363": "eyJpZCI6ImE1YTBkN2NlLWU5ZDEtNTA3OC04NzA2LWIzMWRlNmVlYTY0NSIsImNyZWF0ZWQiOjE3NDAxMzU2NjcxMjcsImV4aXN0aW5nIjp0cnVlfQ==",
+            "GCLB": "CKmJ2Ozxg4GBxgEQAw",
+            "_ga_1N2VH31REP": "GS1.1.1740330237.3.0.1740330237.0.0.0",
+            "_hjSession_517363": "eyJpZCI6IjYxMDZiMjY4LTBjY2YtNGFlOC04ZjNmLWQ0YjFiZTI2MTk1MSIsImMiOjE3NDAzMzAyMzc4MjQsInMiOjAsInIiOjAsInNiIjowLCJzciI6MCwic2UiOjAsImZzIjowLCJzcCI6MH0=",
+            "OptanonConsent": "isGpcEnabled=0&datestamp=Sun+Feb+23+2025+18%3A03%3A58+GMT%2B0100+(Central+European+Standard+Time)&version=202307.1.0&browserGpcFlag=0&isIABGlobal=false&hosts=&consentId=a75f09d1-aca2-4fc7-93e6-4cc0cee3f732&interactionCount=1&landingPath=NotLandingPage&groups=C0001%3A1%2CC0002%3A0%2CC0003%3A0%2CC0004%3A0&geolocation=IT%3B88&AwaitingReconsent=false",
+            "_ga_763SS1MLQ7": "GS1.1.1740330238.3.0.1740330238.0.0.0",
+            "MSCIJSESSIONID": "6E931CB0B959C2D281E4D50F81B39C32.jvmRoute-azure-liferay-1"
+        }
+
+        response = requests.get(url, headers=headers, cookies=cookies)
         self.url = url
         self.headers = headers
+        self.cookies = cookies
         self.html_content = None
         self.soup = None
         self._fetch_page()
 
     def _fetch_page(self):
         try:
-            response = requests.get(self.url, headers=self.headers, timeout=10)
+            response = requests.get(self.url, headers=self.headers, cookies=self.cookies, timeout=10)
             response.raise_for_status()
             self.html_content = response.text
             self.soup = BeautifulSoup(self.html_content, "html.parser")
