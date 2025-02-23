@@ -1,3 +1,12 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Feb 23 23:44:49 2025
+
+@author: andreadesogus
+"""
+
+
 from msci_price_data import MSCIIndexFetcher, index_dictionary
 from msci_weight import MSCIWeightsExtractor, normalize_to_100, read_json_dictionary
 
