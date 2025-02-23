@@ -40,7 +40,7 @@ def api_root():
 @app.route("/api/weights/sector", methods=["GET"])
 def get_sector_weights():
     weights = get_msci_weight()
-    return jesonify(weights)
+    return jsonify(weights)
 
 
 # ===============================================================
